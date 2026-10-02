@@ -1,0 +1,71 @@
+{
+  "_description": "Eco-Sentinal-X Firestore structure. The ESP32 adds ONE document per sample to the 'sensor_readings' collection (auto ID). The dashboard listens in real time, ordered by 'timestamp'.",
+  "firestore": {
+    "sensor_readings/{autoId}": {
+      "deviceId": "esp32_node_01",
+      "timestamp": "Firestore Timestamp (serverTimestamp) OR epoch milliseconds number, e.g. 1790930400000",
+      "mq2_ppm": 212.4,
+      "mq7_ppm": 21.8,
+      "pm25": 31.2,
+      "pm10": 49.7,
+      "dust_density": 0.051,
+      "temperature": 29.6,
+      "humidity": 61.0,
+      "battery_voltage": 3.94,
+      "battery_percent": 78,
+      "boost_voltage": 5.03,
+      "charging": true,
+      "rssi": -63,
+      "free_heap": 178432,
+      "uptime_s": 14520,
+      "aqi": 91
+    },
+    "device_settings/esp32_node_01": {
+      "sample_interval_s": 10,
+      "buzzer_enabled": true,
+      "mq2_threshold": 300,
+      "mq7_threshold": 50,
+      "pm25_threshold": 60,
+      "wifi_ssid": "MyWiFi",
+      "mqtt_broker": "",
+      "firmware_version": "1.0.0"
+    }
+  },
+  "field_units": {
+    "mq2_ppm": "ppm (Smoke/LPG, MQ-2)",
+    "mq7_ppm": "ppm (Carbon Monoxide, MQ-7)",
+    "pm25": "µg/m³", "pm10": "µg/m³", "dust_density": "mg/m³ (Sharp GP2Y1014)",
+    "temperature": "°C (DHT11)", "humidity": "% RH (DHT11)",
+    "battery_voltage": "V", "battery_percent": "%", "boost_voltage": "V (MT3608 output)",
+    "charging": "bool (TP4056 CHRG pin)", "rssi": "dBm (WiFi.RSSI())",
+    "free_heap": "bytes (ESP.getFreeHeap())", "uptime_s": "seconds (millis()/1000)",
+    "aqi": "optional — dashboard computes it from pm25 if omitted"
+  },
+  "esp32_upload_example": {
+    "method": "POST",
+    "url": "https://firestore.googleapis.com/v1/projects/studio-1142491547-98533/databases/(default)/documents/sensor_readings?key=YOUR_WEB_API_KEY",
+    "headers": { "Content-Type": "application/json" },
+    "body": {
+      "fields": {
+        "deviceId": { "stringValue": "esp32_node_01" },
+        "timestamp": { "timestampValue": "2026-10-02T08:40:00Z" },
+        "mq2_ppm": { "doubleValue": 212.4 },
+        "mq7_ppm": { "doubleValue": 21.8 },
+        "pm25": { "doubleValue": 31.2 },
+        "pm10": { "doubleValue": 49.7 },
+        "dust_density": { "doubleValue": 0.051 },
+        "temperature": { "doubleValue": 29.6 },
+        "humidity": { "doubleValue": 61.0 },
+        "battery_voltage": { "doubleValue": 3.94 },
+        "battery_percent": { "integerValue": "78" },
+        "boost_voltage": { "doubleValue": 5.03 },
+        "charging": { "booleanValue": true },
+        "rssi": { "integerValue": "-63" },
+        "free_heap": { "integerValue": "178432" },
+        "uptime_s": { "integerValue": "14520" }
+      }
+    },
+    "arduino_library_alternative": "Firebase-ESP-Client (mobizt): Firebase.Firestore.createDocument(&fbdo, PROJECT_ID, \"\", \"sensor_readings\", content.raw()) with timestamp set via content.set(\"fields/timestamp/timestampValue\", isoTime)"
+  },
+  "firestore_rules_suggestion": "rules_version = '2'; service cloud.firestore { match /databases/{db}/documents { match /sensor_readings/{id} { allow read: if true; allow create: if true; } match /device_settings/{id} { allow read, write: if true; } } }  // tighten for production"
+}
